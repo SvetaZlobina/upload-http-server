@@ -7,7 +7,7 @@ RESCALED_INPUT_DIR = 'upload_images/input_rescaled/'
 RESCALED_STYLE_DIR = 'upload_images/style_rescaled/'
 INPUT_DIR = 'images/input/'
 STYLE_DIR = 'images/style/'
-SEGMENTATION_DIR = 'images/segmentation'
+SEGMENTATION_DIR = 'images/segmentation/'
 
 
 def process_images(index):
