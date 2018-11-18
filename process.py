@@ -23,7 +23,7 @@ def process_images(index):
     make_segmentation(INPUT_DIR + 'in' + str(index) + '.png', SEGMENTATION_DIR + 'in' + str(index) + '.png')
     make_segmentation(STYLE_DIR + 'tar' + str(index) + '.png', SEGMENTATION_DIR + 'tar' + str(index) + '.png')
 
-    subprocess.Popen('th /usr/local/app/styletransfer/neuralstyle_seg.lua -content_image '+INPUT_DIR+'in' + str(index) + '.png'+' -style_image '+STYLE_DIR+'tar' + str(index) + '.png'+' -content_seg '+SEGMENTATION_DIR+'in' + str(index) + '.png'+' -style_seg '+SEGMENTATION_DIR+'tar' + str(index) + '.png'+' -index '+str(index)+' -num_iterations 1000 -save_iter 1000 -print_iter 100 -gpu 0 -serial '+TMP_RESULTS_DIR)
+    subprocess.run('th /usr/local/app/styletransfer/neuralstyle_seg.lua -content_image '+INPUT_DIR+'in' + str(index) + '.png'+' -style_image '+STYLE_DIR+'tar' + str(index) + '.png'+' -content_seg '+SEGMENTATION_DIR+'in' + str(index) + '.png'+' -style_seg '+SEGMENTATION_DIR+'tar' + str(index) + '.png'+' -index '+str(index)+' -num_iterations 1000 -save_iter 1000 -print_iter 100 -gpu 0 -serial '+TMP_RESULTS_DIR, capture_ouput=True)
 
     print('Finish processing images with index {index}'.format(index=index))
 
