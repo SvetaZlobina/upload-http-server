@@ -8,7 +8,7 @@ from process import process_images
 INPUT_DIR = 'upload_images/input/'
 STYLE_DIR = 'upload_images/style/'
 
-FINAL_RESULT_DIR = 'images/segmentation/'
+FINAL_RESULT_DIR = 'images/final_results/'
 
 app = Flask(__name__)
 q = Queue(connection=Redis(), default_timeout=3600)
@@ -24,7 +24,7 @@ def receive_order():
     input_img.save(INPUT_DIR + 'in' + str(index_count) + '.png')
     style_img.save(STYLE_DIR + 'tar' + str(index_count) + '.png')
 
-    r = q.enqueue(process_images, index_count)
+    r = q.enqueue(process_images, index_count, result_ttl=86400)
     index_count += 1
 
     return Response(r.id, status=201)
@@ -41,9 +41,9 @@ def return_result(order_id):
         #     return json.dumps(job.status, ensure_ascii=False)
         index = job.args[0]
         if job.is_finished:
-            return send_file(FINAL_RESULT_DIR + 'tar' + str(index) + '.png', as_attachment=True)
+            return send_file(FINAL_RESULT_DIR + 'best' + str(index) + '_t_1000.png', as_attachment=True)
         else:
-            return json.dumps(job.status, ensure_ascii=False)
+            return Response(job.status, status=202)
 
     except Exception:
         return Response('Not Found', status=404)

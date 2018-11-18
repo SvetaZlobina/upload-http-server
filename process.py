@@ -10,6 +10,7 @@ INPUT_DIR = '/home/upload-http-server/images/input/'
 STYLE_DIR = '/home/upload-http-server/images/style/'
 SEGMENTATION_DIR = '/home/upload-http-server/images/segmentation/'
 TMP_RESULTS_DIR = '/home/upload-http-server/images/tmp_results/'
+FINAL_RESULTS_DIR = '/home/upload-http-server/images/final_results/'
 
 
 def process_images(index):
@@ -23,8 +24,10 @@ def process_images(index):
     make_segmentation(INPUT_DIR + 'in' + str(index) + '.png', SEGMENTATION_DIR + 'in' + str(index) + '.png')
     make_segmentation(STYLE_DIR + 'tar' + str(index) + '.png', SEGMENTATION_DIR + 'tar' + str(index) + '.png')
 
-    subprocess.run('th /usr/local/app/styletransfer/neuralstyle_seg.lua -content_image '+INPUT_DIR+'in' + str(index) + '.png'+' -style_image '+STYLE_DIR+'tar' + str(index) + '.png'+' -content_seg '+SEGMENTATION_DIR+'in' + str(index) + '.png'+' -style_seg '+SEGMENTATION_DIR+'tar' + str(index) + '.png'+' -index '+str(index)+' -num_iterations 1000 -save_iter 1000 -print_iter 100 -gpu 0 -serial '+TMP_RESULTS_DIR, capture_ouput=True)
+    subprocess.call('cd /usr/local/app/styletransfer;\nth /usr/local/app/styletransfer/neuralstyle_seg.lua -content_image '+INPUT_DIR+'in' + str(index) + '.png'+' -style_image '+STYLE_DIR+'tar' + str(index) + '.png'+' -content_seg '+SEGMENTATION_DIR+'in' + str(index) + '.png'+' -style_seg '+SEGMENTATION_DIR+'tar' + str(index) + '.png'+' -index '+str(index)+' -num_iterations 1000 -save_iter 1000 -print_iter 100 -gpu 0 -serial '+TMP_RESULTS_DIR, shell=True)
 
+    subprocess.call('cd /usr/local/app/styletransfer/gen_laplacian;\noctave gen_laplacian.m '+str(index), shell=True)
+    subprocess.call('cd /usr/local/app/styletransfer;\nth /usr/local/app/styletransfer/deepmatting_seg.lua -content_image '+INPUT_DIR+'in' + str(index) + '.png'+' -style_image '+STYLE_DIR+'tar' + str(index) + '.png'+' -init_image '+TMP_RESULTS_DIR+'out'+str(index)+'_t_1000.png'+' -content_seg '+SEGMENTATION_DIR+'in' + str(index) + '.png'+' -style_seg '+SEGMENTATION_DIR+'tar' + str(index) + '.png'+' -index '+str(index)+' -num_iterations 1000 -save_iter 1000 -print_iter 100 -gpu 0 -serial '+FINAL_RESULTS_DIR + ' -f_radius 15 -f_edge 0.01', shell=True)
     print('Finish processing images with index {index}'.format(index=index))
 
 
