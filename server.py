@@ -4,8 +4,8 @@ from rq import Queue
 
 from process import process_images
 
-INPUT_DIR = 'images/input/'
-STYLE_DIR = 'images/style/'
+INPUT_DIR = 'upload_images/input/'
+STYLE_DIR = 'upload_images/style/'
 
 app = Flask(__name__)
 q = Queue(connection=Redis(), default_timeout=3600)
