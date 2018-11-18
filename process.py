@@ -1,13 +1,15 @@
 from PIL import Image, ImageDraw
 import face_recognition
+import subprocess
 
 UPLOAD_INPUT_DIR = 'upload_images/input/'
 UPLOAD_STYLE_DIR = 'upload_images/style/'
 RESCALED_INPUT_DIR = 'upload_images/input_rescaled/'
 RESCALED_STYLE_DIR = 'upload_images/style_rescaled/'
-INPUT_DIR = 'images/input/'
-STYLE_DIR = 'images/style/'
-SEGMENTATION_DIR = 'images/segmentation/'
+INPUT_DIR = '/home/upload-http-server/images/input/'
+STYLE_DIR = '/home/upload-http-server/images/style/'
+SEGMENTATION_DIR = '/home/upload-http-server/images/segmentation/'
+TMP_RESULTS_DIR = '/home/upload-http-server/images/tmp_results/'
 
 
 def process_images(index):
@@ -20,6 +22,9 @@ def process_images(index):
                   RESCALED_STYLE_DIR + 'tar' + str(index) + '.png', STYLE_DIR + 'tar' + str(index) + '.png')
     make_segmentation(INPUT_DIR + 'in' + str(index) + '.png', SEGMENTATION_DIR + 'in' + str(index) + '.png')
     make_segmentation(STYLE_DIR + 'tar' + str(index) + '.png', SEGMENTATION_DIR + 'tar' + str(index) + '.png')
+
+    subprocess.Popen('th /usr/local/app/styletransfer/neuralstyle_seg.lua -content_image '+INPUT_DIR+'in' + str(index) + '.png'+' -style_image '+STYLE_DIR+'tar' + str(index) + '.png'+' -content_seg '+SEGMENTATION_DIR+'in' + str(index) + '.png'+' -style_seg '+SEGMENTATION_DIR+'tar' + str(index) + '.png'+' -index '+str(index)+' -num_iterations 1000 -save_iter 1000 -print_iter 100 -gpu 0 -serial '+TMP_RESULTS_DIR)
+
     print('Finish processing images with index {index}'.format(index=index))
 
 
