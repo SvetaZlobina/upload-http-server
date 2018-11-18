@@ -8,7 +8,7 @@ from process import process_images
 INPUT_DIR = 'upload_images/input/'
 STYLE_DIR = 'upload_images/style/'
 
-FINAL_RESULT_DIR = 'images/style/'
+FINAL_RESULT_DIR = 'images/segmentation/'
 
 app = Flask(__name__)
 q = Queue(connection=Redis(), default_timeout=3600)
