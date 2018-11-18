@@ -1,4 +1,4 @@
-from flask import Flask, request, Response
+from flask import Flask, request, Response, send_file
 from redis import Redis
 from rq import Queue
 import json
@@ -7,6 +7,8 @@ from process import process_images
 
 INPUT_DIR = 'upload_images/input/'
 STYLE_DIR = 'upload_images/style/'
+
+FINAL_RESULT_DIR = 'upload_images/input_rescaled/'
 
 app = Flask(__name__)
 q = Queue(connection=Redis(), default_timeout=3600)
@@ -19,11 +21,11 @@ def receive_order():
     input_img = request.files['input']
     style_img = request.files['style']
     global index_count  # TODO: make unique index validation
-    input_img.save(INPUT_DIR+'input'+str(index_count)+'.png')
-    style_img.save(STYLE_DIR+'style'+str(index_count)+'.png')
-    index_count += 1
+    input_img.save(INPUT_DIR+'in'+str(index_count)+'.png')
+    style_img.save(STYLE_DIR+'tar'+str(index_count)+'.png')
 
-    r = q.enqueue(process_images, 1)
+    r = q.enqueue(process_images, index_count)
+    index_count += 1
 
     return Response(r.id, status=201)
 
@@ -37,7 +39,11 @@ def return_result(order_id):
         # else:
         #     # return Response('Not Ready', status=202)
         #     return json.dumps(job.status, ensure_ascii=False)
-        return json.dumps(job.status, ensure_ascii=False)
+        index = job.args[0]
+        if job.is_finished:
+                return send_file(FINAL_RESULT_DIR+'in'+str(index)+'.png', as_attachment=True)
+        else:
+                return json.dumps(job.status, ensure_ascii=False)
 
     except Exception:
         return Response('Not Found', status=404)
