@@ -32,7 +32,7 @@ def rescale_image(in_path, out_path):
 
     if len(face_landmarks_list) != 1:  # no face or too many faces detected
         print('No faces or too many faces found, exit')
-        return 1
+        return False
 
     face_landmarks = face_landmarks_list[0]
 
@@ -55,7 +55,7 @@ def rescale_image(in_path, out_path):
     cropped_pil_image = pil_image.crop((xmin - int(w / 5), ymin - int(h), xmax + int(w / 5), ymax + int(h / 5)))
     cropped_pil_image.save(out_path)
     print('Finish rescaling image, write to ' + out_path)
-    return 0
+    return True
 
 
 def resize_images(in_path1, out_path1, in_path2, out_path2):

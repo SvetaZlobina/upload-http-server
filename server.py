@@ -8,7 +8,7 @@ from process import process_images
 INPUT_DIR = 'upload_images/input/'
 STYLE_DIR = 'upload_images/style/'
 
-FINAL_RESULT_DIR = 'upload_images/input_rescaled/'
+FINAL_RESULT_DIR = 'images/style/'
 
 app = Flask(__name__)
 q = Queue(connection=Redis(), default_timeout=3600)
@@ -41,7 +41,7 @@ def return_result(order_id):
         #     return json.dumps(job.status, ensure_ascii=False)
         index = job.args[0]
         if job.is_finished:
-            return send_file(FINAL_RESULT_DIR + 'in' + str(index) + '.png', as_attachment=True)
+            return send_file(FINAL_RESULT_DIR + 'tar' + str(index) + '.png', as_attachment=True)
         else:
             return json.dumps(job.status, ensure_ascii=False)
 
